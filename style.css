@@ -13,9 +13,10 @@ body {
 
 #calculatorBody {
     margin: 30px auto 0px;
-    border: 4px solid black;
+    max-width: 400px;
+    border: 4px solid #1d0a14c9;
     border-radius: 6px;
-    width: 80%;
+    width: 100%;
     background-color: #6e254dc9;
     box-shadow: 
         0 15px 30px rgba(0, 0, 0, 0.6),
@@ -32,9 +33,9 @@ body {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding: 4px;
+    padding: 6px;
     box-sizing: border-box;
-    border-bottom: 4px solid black;
+    border-bottom: 4px solid #1d0a14c9;
     border-radius: 2px;
     background-color: rgb(124, 124, 124);
 }
@@ -51,7 +52,8 @@ body {
     margin: 5px;
     background-color: rgba(127, 255, 212, 0.664);
     font-size: 16px;
-    border: solid 3px black;
+    font-weight: 600;
+    border: solid 3px #301122c9;
     border-radius: 6px;
     box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
 }
