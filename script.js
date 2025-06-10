@@ -209,6 +209,53 @@ for (let i = 0; i < calculatorButtons.length; i++) {
     });
 }
 
+document.addEventListener('keydown', function(event) {
+    let pressedKey = event.key; // Gets the value of the pressed key (e.g., "5", "+", "Enter", "Backspace")
+
+    // Define a mapping from keyboard keys to your calculator's button textContent
+    const keyMap = {
+        '0': '0', '1': '1', '2': '2', '3': '3', '4': '4',
+        '5': '5', '6': '6', '7': '7', '8': '8', '9': '9',
+        '.': '.',
+        '+': '+',
+        '-': '-',
+        '*': '×', // Keyboard '*' maps to calculator '×'
+        '/': '÷', // Keyboard '/' maps to calculator '÷'
+        'Enter': '=', // Enter key for equals
+        '=': '=',     // Some keyboards have a separate '=' key without Shift
+        'Backspace': 'BACKSPACE',
+        'Escape': 'CLEAR' // Escape key for CLEAR
+        // Add more mappings if you have other special keys (e.g., 'Delete' for CLEAR)
+    };
+
+    // Get the corresponding calculator button value from our map
+    let calculatorButtonValue = keyMap[pressedKey];
+
+    // If the pressed key is one we recognize in our map
+    if (calculatorButtonValue) {
+        // Prevent default browser actions for certain keys
+        // (e.g., 'Enter' submitting a form, 'Backspace' navigating back, 'Space' scrolling)
+        if (pressedKey === 'Enter' || pressedKey === 'Backspace' || pressedKey === ' ' || pressedKey === '/' || pressedKey === '*') {
+            event.preventDefault();
+        }
+
+        // Find the actual button element in your calculator layout
+        // We need to iterate through all calculatorButtons to find the one that matches
+        calculatorButtons.forEach(button => {
+            // Special handling for '*' and '/' because their textContent is '×' and '÷'
+            let buttonText = button.textContent;
+            if (calculatorButtonValue === '×' && buttonText === '×') {
+                button.click();
+            } else if (calculatorButtonValue === '÷' && buttonText === '÷') {
+                button.click();
+            } else if (buttonText === calculatorButtonValue) {
+                // For all other buttons (numbers, '+', '-', '.', '=', CLEAR, BACKSPACE, +/-)
+                button.click();
+            }
+        });
+    }
+});
+
 function add(a, b) {
     return a + b;
 }
