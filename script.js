@@ -20,10 +20,9 @@ for (let i = 0; i < calculatorButtons.length; i++) {
     button.addEventListener('click', function() {
         const buttonValue = this.textContent;
 
-        // Number and Decimal Buttons
         if (numberButtons.includes(buttonValue)) {
             if (buttonValue === '.') {
-                // Logic for decimal point
+              
                 if (!currentDisplayNumber.includes('.')) {
                     if (currentDisplayNumber === "" || currentDisplayNumber === "0") {
                         currentDisplayNumber = "0.";
@@ -31,29 +30,28 @@ for (let i = 0; i < calculatorButtons.length; i++) {
                         currentDisplayNumber += buttonValue;
                     }
                 }
-            } else { // Logic for digits (0-9)
+            } else {
                 if (currentDisplayNumber === "0") {
-                    currentDisplayNumber = buttonValue; // Replace "0" with the new digit
+                    currentDisplayNumber = buttonValue; 
                 } else {
-                    currentDisplayNumber += buttonValue; // Append the digit
+                    currentDisplayNumber += buttonValue; 
                 }
             }
 
-            if (operator !== "") { // If an operator is already set, it means we are typing input2
-                // We need to rebuild the fullEquationDisplay
+            if (operator !== "") { 
+    
                 fullEquationDisplay = input1 + " " + displayOperator + " " + currentDisplayNumber;
-            } else { // No operator yet, so just show the current number being typed
+            } else { 
                 fullEquationDisplay = currentDisplayNumber;
             }
 
-            screen.textContent = fullEquationDisplay; // Update display after number input
+            screen.textContent = fullEquationDisplay;
 
         }
-        // Button Clicks
         else if (operatorButtons.includes(buttonValue)) {
-            // If input1 is empty, it means this is the first number being entered
+           
             if (input1 === "") {
-                input1 = Number(currentDisplayNumber); // Store current display as input1 (convert to number)
+                input1 = Number(currentDisplayNumber); 
 
                 displayOperator = buttonValue;
                 
@@ -72,16 +70,95 @@ for (let i = 0; i < calculatorButtons.length; i++) {
                 console.log("Display cleared for next input.");
                 screen.textContent = fullEquationDisplay;
             } else {
-                // Chaining operations 
+                console.log("Chaining operation detected.");
+                console.log("Before chain: input1=", input1, "operator=", operator, "currentDisplayNumber=", currentDisplayNumber);
+
+                let input2 = Number(currentDisplayNumber); 
+
+                let result = operate(input1, input2, operator);
+
+                input1 = result;
+
+                displayOperator = buttonValue;
+                operator = buttonValue; 
+                if (operator === '×') {
+                    operator = '*';
+                } else if (operator === '÷') {
+                    operator = '/';
+                }
+
+                
+                currentDisplayNumber = "0";
+
+                fullEquationDisplay = input1 + " " + displayOperator;
+                screen.textContent = fullEquationDisplay;
+
+                console.log("After chain: input1=", input1, "operator=", operator, "displayOperator=", displayOperator, "currentDisplayNumber=", currentDisplayNumber);
+                console.log("Display showing:", fullEquationDisplay);
         
             }
         }
     
         else if (buttonValue === '=') {
-            
+            if (input1 !== "" && operator !== "" && currentDisplayNumber !== "0" && currentDisplayNumber !== "") {
+                let input2 = Number(currentDisplayNumber); 
 
+                
+                let finalResult = operate(input1, input2, operator);
+
+               
+                if (typeof finalResult === 'string' && finalResult.startsWith('error')) {
+                    fullEquationDisplay = finalResult; 
+                    screen.textContent = fullEquationDisplay;
+
+                    
+                    input1 = "";
+                    input2 = "";
+                    operator = "";
+                    currentDisplayNumber = "0";
+                    displayOperator = "";
+                } else {
+                   
+                    fullEquationDisplay = String(finalResult); 
+                    screen.textContent = fullEquationDisplay;
+
+                    
+                    input1 = finalResult;      
+                    currentDisplayNumber = String(finalResult); 
+                                                                
+                    operator = "";          
+                    displayOperator = "";     
+                    input2 = "";           
+                }
+            } else {
+                
+                if (input1 !== "" && operator !== "" && (currentDisplayNumber === "0" || currentDisplayNumber === "")) {
+                     let input2 = input1;
+                     let finalResult = operate(input1, input2, operator);
+
+                     fullEquationDisplay = String(finalResult);
+                     screen.textContent = fullEquationDisplay;
+
+                     input1 = finalResult;
+                     currentDisplayNumber = String(finalResult);
+                     operator = "";
+                     displayOperator = "";
+                     input2 = "";
+                } else if (currentDisplayNumber !== "0" && currentDisplayNumber !== "") {
+           
+                    fullEquationDisplay = currentDisplayNumber;
+                    screen.textContent = fullEquationDisplay;
+    
+                    input1 = Number(currentDisplayNumber);
+                    operator = "";
+                    displayOperator = "";
+                    input2 = "";
+                }
+                
+            }
         }
-        else if (buttonValue === 'CLEAR') {
+
+       else if (buttonValue === 'CLEAR') {
             console.log("CLEAR clicked. Reset all variables and screen.");
             input1 = "";
             input2 = "";
@@ -100,12 +177,33 @@ for (let i = 0; i < calculatorButtons.length; i++) {
             }
 
             if (operator !== "") {
-                // If there's an operator, we're editing input2 (currentDisplayNumber)
+
                 fullEquationDisplay = input1 + " " + operator + " " + currentDisplayNumber;
             } else {
-                // Otherwise, we're editing input1 (currentDisplayNumber)
+
                 fullEquationDisplay = currentDisplayNumber;
             }
+            screen.textContent = fullEquationDisplay;
+        }
+
+        else if (buttonValue === '+/-') {
+            let num = Number(currentDisplayNumber);
+
+            if (!isNaN(num)) {
+                num = num * -1;
+                currentDisplayNumber = String(num); 
+            } else {
+                
+                currentDisplayNumber = "0"; 
+            }
+            
+        
+            if (operator !== "") { 
+                fullEquationDisplay = input1 + " " + displayOperator + " " + currentDisplayNumber;
+            } else { 
+                fullEquationDisplay = currentDisplayNumber;
+            }
+            
             screen.textContent = fullEquationDisplay;
         }
     });
@@ -137,8 +235,9 @@ function operate(a, b, operator) {
         return subtract(a, b);
     } else if (operator == "*") {
         return multiply(a, b);
-    } else {
+    } else if (operator == "/") {
         return divide(a, b);
+    } else {
+        return a; 
     }
-
 }
